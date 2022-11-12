@@ -1,4 +1,4 @@
-
+import  re
 
 def paste_web(*args: str):
     """
@@ -12,3 +12,11 @@ def paste_web(*args: str):
     return string
 
 
+def search_text(text, string_search, dict, var_name):
+
+    if re.search(string_search, text):
+        dict[var_name] = text
+    else:
+        dict[var_name] = None
+
+    return dict

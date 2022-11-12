@@ -1,4 +1,6 @@
-from functions import paste_web
+import sys
+
+from functions import paste_web, search_text
 from variables import headers, web_idealista
 from bs4 import BeautifulSoup
 import requests
@@ -15,13 +17,16 @@ def get_web(ciudad: str = "", sub="", inmueble=False):
         website = paste_web(web_idealista, ciudad)
         if sub != "":
             website = website + sub
+    try:
+        page = requests.get(website, headers=headers)
 
-    page = requests.get(website, headers=headers)
+    except requests.exceptions.RequestException:
+        sys.exit("Connection error")
+
     soup = BeautifulSoup(page.content, "html.parser")
 
     if check_unknown(soup):
-        print("Error! Wrong city")
-        soup = None
+        sys.exit("Error: Wrong city")
 
     return soup
 
@@ -30,6 +35,8 @@ def check_unknown(soup):
     results = soup.find("div", id="main").find("div", class_="zero-results")
     return results is not None
 
+def check_busted():
+    pass
 
 def get_number_pages(soup, n=30):
     texto = soup.find("div", {"class": "listing-top"}).find("h1").text
@@ -41,15 +48,16 @@ def get_number_pages(soup, n=30):
 def parse_header(text, dix: dict):
     for k in text:
         item = k.text
-        if re.search(r'hab.$', item):
-            dix["rooms"] = item
-        elif re.search(r'm²$', item):
+        dix = search_text(item, r'hab.$', dix, "rooms")
+        if re.search(r'm²$', item):
             dix["surface"] = item
         elif re.search(r"(^Planta|Bajo)", item):
             dix["floor"] = item
 
     return dix
 
+def solve_captcha():
+    pass
 
 def get_info_main(sub_part, dix):
     dix["id"] = sub_part.parent["data-adid"]
@@ -91,9 +99,13 @@ for anuncio in anuncios:
             d["garage"] = v
         elif re.search("muebl", v):
             d["furniture"] = v
+    d["location"] = ";".join([item.text for item in soup2.find_all("li", class_="header-map-list")])
+    d["seller"] = soup2.find("div", class_="professional-name").find("div", class_="name").text
+
     time.sleep(10*(time.time()-t0))
-    #try:
-    #    d["location"] = soup2.find("div", id="headerMap", class_="clearfix").find_all("li")
+
+
+
     #except AttributeError:
     #    d["location"] = None
 

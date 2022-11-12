@@ -7,8 +7,8 @@ headers = {
     "dnt": "1",
     "Pragma": "no-cache",
     "Upgrade-Insecure-Requests": "1",
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/5\
-    37.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36"
+    "User-Agent": "Mozilla/5.0 (Linux; Android 10; Wildfire U20 5G) AppleWebKit/537.36 \
+    (KHTML, like Gecko) Chrome/74.0.3729.136 Mobile Safari/537.36"
 }
 
 web_idealista = "https://www.idealista.com/buscar/alquiler-viviendas/"
