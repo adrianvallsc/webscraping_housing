@@ -15,6 +15,54 @@ from datetime import datetime
 
 
 class FotocasaSelenium:
+
+    n_pages = 1
+    url = "https://www.fotocasa.es/es/"
+    fcpath = "webdriver/chromedriver.exe"
+
+    def __init__(self, n_pages=n_pages, url=url, fcpath=fcpath):
+        self.n_pages = n_pages
+        self.url = url
+        self.browser = webdriver.Chrome(fcpath)
+        self.open_browser
+        time.sleep(2)
+
+    def __del__(self):
+        self.close_browser
+
+    def open_browser(self):
+        self.browser.get(self.url)
+        self.browser.maximize_window()
+        time.sleep(1)
+
+    def close_browser(self):
+        self.browser.quit()
+
+    def accept_cookies(self):
+        cookies = self.browser.find_elements_by_xpath('.//*[@id="App"]/div[3]/div/div/div/footer/div/button[2]')
+        cookies.click()
+        time.sleep(2)
+        return
+
+    def search_rent(self, ciudad: str):
+        rent = self.browser.find_elements_by_xpath('/html/body/div[1]/div[1]/main/section/div[2]/'
+                                                   'div/div/div/div/div[1]/div/div[2]/label')
+        rent.click()
+        time.sleep(1)
+        search = self.browser.find_elements_by_xpath('/html/body/div[1]/div[1]/main/section/div[2]/div/div/div/'
+                                                     'div/div[2]/div[2]/form/div/div/div/div/div/input')
+        search.send_keys(ciudad)
+        time.sleep(1)
+        search.send_keys(Keys.ENTER)
+        time.sleep(1)
+        return
+
+
+
+
+
+
+    '''
     def gen_website(self, ciudad: str, sub: str, inmueble: bool) -> str:
         """
         This function generates a website for the idealista website
@@ -36,6 +84,7 @@ class FotocasaSelenium:
                 site = site + sub
 
         return site
+
 
     def get_web(self, ciudad: str = "", sub="", inmueble=False):
 
@@ -73,3 +122,6 @@ class FotocasaSelenium:
             sys.exit("Error: Too many requests, idealista blocked us")
         else:
             pass
+            
+    '''
+
