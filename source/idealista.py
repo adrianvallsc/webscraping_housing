@@ -1,6 +1,6 @@
 import sys
-from functions import paste_web, parse_list
-from variables import headers, web_idealista, cookie
+from functions import paste_web, parse_list, split
+from variables import headers, web_idealista, cookie, default
 from bs4 import BeautifulSoup
 import requests
 import re
@@ -8,6 +8,7 @@ import time
 import pandas as pd
 from tqdm import tqdm
 from datetime import datetime
+import threading
 
 
 
@@ -141,16 +142,8 @@ def get_info_link(dix):
 
     return dix
 
-city = "Murcia"
-limit = 2
-speed = 0
 
-soup = get_web(city)
-pages = get_number_pages(soup)
-limit = pages if limit is None else limit
-lista = list()
-
-for num in range(1, pages)[:limit]:
+def extract_pages(city, num, lista, speed):
 
     soup = get_web(city, f"pagina-{num}.htm")
     anuncios = soup.find_all("div", {"class": "item-info-container"})
@@ -160,14 +153,48 @@ for num in range(1, pages)[:limit]:
         d = get_info_main(anuncio, d)
         t0 = time.time()
         get_info_link(d)
-        time.sleep(speed*(time.time()-t0))
+        time.sleep(speed * (time.time() - t0))
         lista.append(d)
 
 
-pd.DataFrame(lista).to_csv(f"../dataset/{city}.csv")
+def main_idealista(city, speed, limit):
+
+    soup = get_web(city)
+    pages = get_number_pages(soup)
+    limit = pages if limit is None else limit
+    lista = list()
+
+    try:
+        for num in range(1, pages)[:limit]:
+            threading.Thread(target=extract_pages, args=(city, num, lista, speed))
+            extract_pages(city, num, lista, speed)
+
+    finally:
+        pd.DataFrame(lista).to_csv(f"../dataset/{city}.csv")
+
+def main_idealista_v2(city, speed, limit, threads):
+    # Estaba intentando hacer multithread, pero no consigo hacerlo. Más adelante lo implementaré
+    soup = get_web(city)
+    pages = get_number_pages(soup)
+    limit = pages if limit is None else limit
+    lista = list()
+
+    try:
+        elements = split(list(range(1, pages)[:limit]), threads)
+        works = []
+        for k in elements:
+            for elm in k:
+                hilo = threading.Thread(target=extract_pages, args=(city, elm, lista, speed))
+                works.append(hilo.start())
+
+        for k in works:
+            k.join()
+
+    finally:
+        pd.DataFrame(lista).to_csv(f"../dataset/{city}.csv")
 
 
-#if __name__ == "__main__":
+if __name__ == "__main__":
 
-#    main_idealista("madrid", 0, 0)
+    main_idealista(default["city"], default["speed"], default["limit"])
 

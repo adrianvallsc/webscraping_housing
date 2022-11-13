@@ -16,4 +16,5 @@ headers = {
 
 cookie = {"datadome": "BuCriLq.fGP_8NDSNCAFXR4oBF-0rxDzn6gIxy_wobKtDZ4XgOV_NAA4k~qQbY.KIq6HKUZ11PxMHCBXdXQ1JG7GxA0OdLpniYbvMV8TjKw_74ri3ly9MEx3ETG_tmc"}
 
+default = {"city": "Murcia", "speed": 0, "limit": 2}
 
