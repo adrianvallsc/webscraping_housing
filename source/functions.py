@@ -33,3 +33,7 @@ def parse_list(text, dix: dict, **kwargs) -> dict:
             dix = search_text(item, value, dix, key)
 
     return dix
+
+def split(a, n):
+    k, m = divmod(len(a), n)
+    return [a[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(n)]

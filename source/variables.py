@@ -14,7 +14,8 @@ headers = {
     (KHTML, like Gecko) Chrome/74.0.3729.136 Mobile Safari/537.36"
 }
 
-cookie = {"datadome": "rvrBaBoJFYY~GzxeCeY4aV~I1U-Asjw3O_.D_I939qs3A3RwnlTy15.__hGqXMDKeAHohU9cKQ_eJ2GspfR.bltJIPL3FNev0oM2CbLoF~FwsLsdksvyHmDaA~eAu~5"}
+cookie = {"datadome": "BuCriLq.fGP_8NDSNCAFXR4oBF-0rxDzn6gIxy_wobKtDZ4XgOV_NAA4k~qQbY.KIq6HKUZ11PxMHCBXdXQ1JG7GxA0OdLpniYbvMV8TjKw_74ri3ly9MEx3ETG_tmc"}
 
+default = {"city": "Murcia", "speed": 0, "limit": 2}
 
 web_fotocasa = "https://www.fotocasa.es/es/"
