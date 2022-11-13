@@ -1,12 +1,15 @@
 import sys
 from functions import paste_web, parse_list
-from variables import headers, web_idealista
+from variables import headers, web_idealista, cookie
 from bs4 import BeautifulSoup
 import requests
 import re
 import time
 import pandas as pd
 from tqdm import tqdm
+from datetime import datetime
+
+
 
 
 def gen_website(ciudad: str, sub: str, inmueble: bool) -> str:
@@ -37,7 +40,7 @@ def get_web(ciudad: str = "", sub="", inmueble=False):
     website = gen_website(ciudad, sub, inmueble)
 
     try:
-        page = requests.get(website, headers=headers)
+        page = requests.get(website, headers=headers, cookies=cookie)
 
 
     except requests.exceptions.RequestException:
@@ -83,7 +86,9 @@ def get_number_pages(extract, n=30):
 
 
 def get_info_main(sub_part, dix):
+    now = datetime.now()
     dix["id"] = sub_part.parent["data-adid"]
+    dix["time"] = now.strftime("%d/%m/%Y %H:%M:%S")
     dix["title"] = sub_part.find("a", {"class": "item-link"}).text
     dix["price"] = sub_part.find("span", {"class": "item-price"}).text
     texto = sub_part.find_all("span", {"class": "item-detail"})
@@ -141,18 +146,21 @@ city ="madrid"
 soup = get_web(city)
 pages = get_number_pages(soup)
 
-anuncios = soup.find_all("div", {"class": "item-info-container"})
-
 lista = list()
 
-for anuncio in tqdm(anuncios):
-    d = dict()
-    d = get_info_main(anuncio, d)
-    t0 = time.time()
-    d = get_info_link(d)
-    time.sleep(2*(time.time()-t0))
-    lista.append(d)
+for num in tqdm(range(1, pages)):
+
+    soup = get_web(city, f"pagina-{num}.htm")
+    anuncios = soup.find_all("div", {"class": "item-info-container"})
+
+    for anuncio in anuncios:
+        d = dict()
+        d = get_info_main(anuncio, d)
+        t0 = time.time()
+        d = get_info_link(d)
+        time.sleep(10*(time.time()-t0))
+        lista.append(d)
+
 
 pd.DataFrame(lista).to_csv(f"../dataset/{city}.csv")
-# for i in range(1, pages+1):
-#    get_web(city, f"pagina-{i}.htm")
+

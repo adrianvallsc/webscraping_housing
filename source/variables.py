@@ -1,3 +1,6 @@
+
+web_idealista = "https://www.idealista.com/buscar/alquiler-viviendas/"
+
 headers = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,\
     */*;q=0.8",
@@ -11,4 +14,6 @@ headers = {
     (KHTML, like Gecko) Chrome/74.0.3729.136 Mobile Safari/537.36"
 }
 
-web_idealista = "https://www.idealista.com/buscar/alquiler-viviendas/"
+cookie = {"datadome": "rvrBaBoJFYY~GzxeCeY4aV~I1U-Asjw3O_.D_I939qs3A3RwnlTy15.__hGqXMDKeAHohU9cKQ_eJ2GspfR.bltJIPL3FNev0oM2CbLoF~FwsLsdksvyHmDaA~eAu~5"}
+
+
