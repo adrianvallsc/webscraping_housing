@@ -42,8 +42,8 @@ def get_web(ciudad: str = "", sub="", inmueble=False):
     try:
         page = requests.get(website, headers=headers, cookies=cookie)
 
-
     except requests.exceptions.RequestException:
+
         sys.exit("Connection error")
 
     extract = check_web(page)
@@ -137,30 +137,37 @@ def get_info_link(dix):
     dix["description"] = descrip.find("p").text if descrip else None
     dix = get_details_properties(extract, dix)
     dix["location"] = get_location(extract)
-    dix = get_seller(extract, dix)
+    get_seller(extract, dix)
 
     return dix
 
-city ="madrid"
+city = "Murcia"
+limit = 2
+speed = 0
 
 soup = get_web(city)
 pages = get_number_pages(soup)
-
+limit = pages if limit is None else limit
 lista = list()
 
-for num in tqdm(range(1, pages)):
+for num in range(1, pages)[:limit]:
 
     soup = get_web(city, f"pagina-{num}.htm")
     anuncios = soup.find_all("div", {"class": "item-info-container"})
 
-    for anuncio in anuncios:
+    for anuncio in tqdm(anuncios):
         d = dict()
         d = get_info_main(anuncio, d)
         t0 = time.time()
-        d = get_info_link(d)
-        time.sleep(10*(time.time()-t0))
+        get_info_link(d)
+        time.sleep(speed*(time.time()-t0))
         lista.append(d)
 
 
 pd.DataFrame(lista).to_csv(f"../dataset/{city}.csv")
+
+
+#if __name__ == "__main__":
+
+#    main_idealista("madrid", 0, 0)
 
