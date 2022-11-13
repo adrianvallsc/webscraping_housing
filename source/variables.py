@@ -17,3 +17,4 @@ headers = {
 cookie = {"datadome": "rvrBaBoJFYY~GzxeCeY4aV~I1U-Asjw3O_.D_I939qs3A3RwnlTy15.__hGqXMDKeAHohU9cKQ_eJ2GspfR.bltJIPL3FNev0oM2CbLoF~FwsLsdksvyHmDaA~eAu~5"}
 
 
+web_fotocasa = "https://www.fotocasa.es/es/"
