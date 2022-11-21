@@ -1,6 +1,6 @@
 import sys
-from functions import paste_web, parse_list, split
-from variables import headers, web_idealista, cookie, default
+from source.functions import paste_web, parse_list, split
+from source.variables import headers, web_idealista, cookie, default
 from bs4 import BeautifulSoup
 import requests
 import re
@@ -191,7 +191,7 @@ def main_idealista_v2(city, speed, limit, threads):
             k.join()
 
     finally:
-        pd.DataFrame(lista).to_csv(f"../dataset/{city}.csv")
+        pd.DataFrame(lista).to_csv(f"./dataset/{city}.csv")
 
 
 if __name__ == "__main__":
