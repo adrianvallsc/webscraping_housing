@@ -1,6 +1,6 @@
 import sys
-from source.functions import paste_web, parse_list, split
-from source.variables import headers, web_idealista, cookie, default
+from source.functions import paste_web, parse_list
+from source.variables import headers, web_idealista, cookie
 from bs4 import BeautifulSoup
 import requests
 import re
@@ -170,31 +170,7 @@ def main_idealista(city, speed, limit):
             extract_pages(city, num, lista, speed)
 
     finally:
-        pd.DataFrame(lista).to_csv(f"../dataset/{city}.csv")
-
-def main_idealista_v2(city, speed, limit, threads):
-    # Estaba intentando hacer multithread, pero no consigo hacerlo. Más adelante lo implementaré
-    soup = get_web(city)
-    pages = get_number_pages(soup)
-    limit = pages if limit is None else limit
-    lista = list()
-
-    try:
-        elements = split(list(range(1, pages)[:limit]), threads)
-        works = []
-        for k in elements:
-            for elm in k:
-                hilo = threading.Thread(target=extract_pages, args=(city, elm, lista, speed))
-                works.append(hilo.start())
-
-        for k in works:
-            k.join()
-
-    finally:
         pd.DataFrame(lista).to_csv(f"./dataset/{city}.csv")
 
 
-if __name__ == "__main__":
-
-    main_idealista(default["city"], default["speed"], default["limit"])
 
