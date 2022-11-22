@@ -36,7 +36,14 @@ def gen_website(ciudad: str, sub: str, inmueble: bool) -> str:
     return site
 
 
-def get_web(ciudad: str = "", sub="", inmueble=False):
+def get_web(ciudad: str = "", sub: str="", inmueble: bool=False):
+    """
+    This function obtains the website
+    :param ciudad: city to obtain
+    :param sub: other string
+    :param inmueble: if it is a building or not
+    :return: request
+    """
 
     website = gen_website(ciudad, sub, inmueble)
 
@@ -53,6 +60,11 @@ def get_web(ciudad: str = "", sub="", inmueble=False):
 
 
 def check_web(page):
+    """
+    This function check if the web is available
+    :param page: request from a website
+    :return: request
+    """
 
     extract = BeautifulSoup(page.content, "html.parser")
 
@@ -170,7 +182,7 @@ def main_idealista(city, speed, limit):
             extract_pages(city, num, lista, speed)
 
     finally:
-        pd.DataFrame(lista).to_csv(f"./dataset/{city}.csv")
+        pd.DataFrame(lista).to_csv(f"./dataset/{city}_idealista.csv")
 
 
 

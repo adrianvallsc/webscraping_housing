@@ -1,28 +1,25 @@
-import sys
+
 # Selenium tiene que ser instalado previamente para que funcione la clase
-import selenium
+
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import time
 import pandas as pd
-import csv
+
 
 
 class FotocasaSelenium:
     # Se definen aquí los parámetros para la búsqueda: Url, ciudades en las que buscar y cantidad de páginas a scrapear
-    n_pages = 4
-    cities = ("Madrid-capital", "Barcelona-capital", "Zaragoza-capital", "Valencia-capital", "Sevilla-capital")
+    n_pages = 2
+    city = "Madrid"
     url = "https://www.fotocasa.es/es/"
-    # El path a poner aquí es del acceso a la carpeta con el archivo del chromedriver descargado
-    executable_path = "C:/Users/javie/Downloads/chromedriver_win32/chromedriver.exe"
     # Estas preferencias evitan que se cargen imágenes durante el proceso
     chrome_options = webdriver.ChromeOptions()
     prefs = {"profile.managed_default_content_settings.images": 2}
     chrome_options.add_experimental_option("prefs", prefs)
-    chrome_options.experimental_options["prefs"]
+    var = chrome_options.experimental_options["prefs"]
     prices_list = []
     rooms_list = []
     bathrooms_list = []
@@ -30,12 +27,13 @@ class FotocasaSelenium:
     floors_list = []
     city_list = []
 
-    def __init__(self, n_pages=n_pages, url=url, executable_path=executable_path, chrome_options=chrome_options,
-                 cities=cities):
+    def __init__(self, n_pages=n_pages, url=url, chrome_options=chrome_options,
+                 city = city):
         self.n_pages = n_pages
         self.url = url
-        self.driver = webdriver.Chrome(executable_path=executable_path, chrome_options=chrome_options)
-        self.cities = cities
+        self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(),
+                                       chrome_options=chrome_options)
+        self.city = city
         self.open_driver()
         time.sleep(2)
 
@@ -62,16 +60,17 @@ class FotocasaSelenium:
     def search_rent(self, city: str):
         self.open_driver()
         time.sleep(2)
-        rent = self.driver.find_elements_by_xpath('/html/body/div[1]/div[1]/main/section/div[2]/div/div/div/div/'
+        rent = self.driver.find_element("xpath",'/html/body/div[1]/div[1]/main/section/div[2]/div/div/div/div/'
                                                   'div[1]/div/div[2]/label')
-        rent[0].click()
+        rent.click()
         time.sleep(1)
-        search = self.driver.find_elements_by_xpath('/html/body/div[1]/div[1]/main/section/div[2]/div/div/div/'
+        search = self.driver.find_element("xpath", '/html/body/div[1]/div[1]/main/section/div[2]/div/div/div/'
                                                     'div/div[2]/div[2]/form/div/div/div/div/div/input')
-        search[0].click()
-        search[0].send_keys(city)
+
+        search.click()
+        search.send_keys(city)
         time.sleep(2)
-        search[0].send_keys(Keys.ENTER)
+        search.send_keys(Keys.ENTER)
         time.sleep(3)
         self.scrap_pages()
         return
@@ -98,7 +97,7 @@ class FotocasaSelenium:
         for price in range(len(prices)):
             price_euros = prices[price].text.split(" ")
             self.prices_list.append(price_euros[0])
-            self.city_list.append(self.city_name[0])
+            self.city_list.append(self.city)
 
         rooms = self.driver.find_elements(by=By.CSS_SELECTOR, value='span.re-CardFeaturesWithIcons-feature-icon--rooms')
         for room in range(len(rooms)):
@@ -137,25 +136,12 @@ class FotocasaSelenium:
         self.open_driver()
         time.sleep(2)
         self.accept_cookies()
-        for city in self.cities:
-            self.city_name = city.split(" ")
-            self.search_rent(city)
+        self.search_rent(self.city)
         self.create_dataset()
 
     def create_dataset(self):
         df = pd.DataFrame(list(zip(self.city_list, self.prices_list, self.surfaces_list, self.rooms_list,
                                    self.bathrooms_list, self.floors_list)),
                           columns=['Ciudad', 'Precio', 'Superficie', 'Habitaciones', 'Lavabos', 'Planta'])
-        df.to_csv('FotocasaDataset.csv')
+        df.to_csv(f"./dataset/{self.city}_fotocasa.csv")
 
-
-chrome_options = webdriver.ChromeOptions()
-prefs = {"profile.managed_default_content_settings.images": 2}
-chrome_options.add_experimental_option("prefs", prefs)
-chrome_options.experimental_options["prefs"]
-prueba = FotocasaSelenium(n_pages=5, url="https://www.fotocasa.es/es/",
-                          executable_path="C:/Users/javie/Downloads/chromedriver_win32/chromedriver.exe",
-                          cities=["Madrid capital", "Barcelona capital", "Zaragoza capital", "Valencia capital",
-                                  "Sevilla capital"],
-                          chrome_options=chrome_options)
-prueba.scrap_cities()
