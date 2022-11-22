@@ -31,5 +31,5 @@ This program requires the installation of Google Chrome prior running it: https:
 8. Execute the following command `python main.py` followed by the city you want to search and the number of pages desired to obtain
    1. For example if you want to obtain the 3 first pages of the city of Santander you will execute `python main.py Santander 3`
    2. If you want to obtain the first 10 pages of the city of Barcelona, you will have to execute `python main.py Barcelona 10`
-9. Obtain the dataset in the dataset folder. There you will obtai
+9. Obtain the dataset in the dataset folder. There you will obtain the datasets in .csv format, one with the name city_fotocasa.csv, which contains the flats obtained in fotocasa, and another named city_idealista.csv which contains the flats obtained in idealista.
 
