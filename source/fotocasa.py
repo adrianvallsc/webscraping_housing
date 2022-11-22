@@ -80,14 +80,14 @@ class FotocasaSelenium:
         screen_height = self.driver.execute_script("return window.screen.height")
         i = 1
         while True:
-            # scroll one screen height each time
+            # Hay que recorrer la página para poder scrapear los datos
             self.driver.execute_script(
                 "window.scrollTo(0, {screen_height}*{i});".format(screen_height=screen_height, i=i))
             i += 1
             time.sleep(scroll_pause)
-            # update scroll height each time after scrolled, as the scroll height can change after we scrolled the page
+            # Se actualiza el tamaño del scroll cada vez, ya que fuese una página de scroll infinito (reddit), 
+            # el tamaño cambia según avanzamos
             scroll_height = self.driver.execute_script("return document.body.scrollHeight;")
-            # Break the loop when the height we need to scroll to is larger than the total scroll height
             if screen_height * i > scroll_height:
                 break
         time.sleep(2)
@@ -121,7 +121,8 @@ class FotocasaSelenium:
         for floor in range(len(floors)):
             floor_n = floors[floor].text.split(" ")
             self.floors_list.append(floor_n[0])
-
+    
+    # Si se realiza la búsqueda en más de una página, se va cambiando el url
     def scrap_pages(self):
         self.scrap_page()
         time.sleep(3)
@@ -132,6 +133,7 @@ class FotocasaSelenium:
                 self.driver.get(new_url)
                 self.scrap_page()
 
+    # Función a utilizar para ejecutar el web scraping completo            
     def scrap_cities(self):
         self.open_driver()
         time.sleep(2)
@@ -139,6 +141,7 @@ class FotocasaSelenium:
         self.search_rent(self.city)
         self.create_dataset()
 
+    # Generación del csv mediante Pandas      
     def create_dataset(self):
         df = pd.DataFrame(list(zip(self.city_list, self.prices_list, self.surfaces_list, self.rooms_list,
                                    self.bathrooms_list, self.floors_list)),
